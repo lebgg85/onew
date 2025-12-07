@@ -1,17 +1,3 @@
--- Message de débogage très visible
-local success, err = pcall(function()
-    print("\n========================================")
-    print("  [AQUA PULSE UI] Démarrage du script")
-    print("  Heure: " .. os.date("%X"))
-    print("  Mois actuel: " .. os.date("%B") .. " (" .. os.date("%m") .. ")")
-    print("  Chemin du script: " .. (script and script:GetFullName() or "N/A"))
-    print("========================================\n")
-end)
-
-if not success then
-    warn("[ERREUR] Impossible d'afficher le message de débogage:", err)
-end
-
 -- Custom made by ssennex.
 -- Skid what are you doing here bro
 
@@ -35,25 +21,9 @@ local Library = {
 			Divider = Color3.fromRGB(40, 40, 45),
 			Text = Color3.fromRGB(240, 240, 245),
 			TextDark = Color3.fromRGB(160, 160, 165) 
-    },
-    Christmas = {
-        Main = Color3.fromRGB(20, 40, 25),     -- Vert foncé
-        Second = Color3.fromRGB(40, 15, 15),   -- Rouge foncé
-        Stroke = Color3.fromRGB(100, 30, 30),  -- Rouge moyen
-        Divider = Color3.fromRGB(60, 20, 20),  -- Rouge foncé
-        Text = Color3.fromRGB(255, 255, 255),  -- Blanc pur
-        TextDark = Color3.fromRGB(200, 200, 200), -- Gris clair
-        Accent = Color3.fromRGB(255, 215, 0),  -- Or
-        Highlight = Color3.fromRGB(200, 0, 0)  -- Rouge vif
     }
 },
-
--- Forcer l'activation du thème de Noël
-print("[INFO] Thème de Noël activé manuellement")
-Library.SelectedTheme = "Christmas"
-print("[DEBUG] Thème appliqué:", Library.SelectedTheme)
--- Forcer l'application du thème
-SetTheme()
+	SelectedTheme = "Default",
 	Folder = nil,
 	SaveCfg = false,
 	Font = Enum.Font.Gotham
@@ -256,66 +226,16 @@ local function AddThemeObject(Object, Type)
 end    
 
 local function SetTheme()
-	print("[DEBUG] SetTheme() appelé avec le thème:", Library.SelectedTheme)
-	if not Library.Themes[Library.SelectedTheme] then
-		print("[ERREUR] Le thème", Library.SelectedTheme, "n'existe pas dans Library.Themes")
-		print("Thèmes disponibles:", table.concat(table.foreach(Library.Themes, print) or {}, ", "))
-		return
-	end
-	
-	print("[DEBUG] Application des couleurs du thème:", Library.SelectedTheme)
 	for Name, Type in pairs(Library.ThemeObjects) do
 		for _, Object in pairs(Type) do
 			Object[ReturnProperty(Object)] = Library.Themes[Library.SelectedTheme][Name]
 		end    
-	end
-	
-	-- Activer/désactiver les effets de Noël
-	if Library.ChristmasEffects then
-		-- Nettoyer les effets existants
-		for _, effect in ipairs(Library.ChristmasEffects) do
-			if effect and effect.Parent then
-				effect:Destroy()
-			end
-		end
-	end
-	
-	Library.ChristmasEffects = {}
-	
-	-- Activer les effets si le thème de Noël est sélectionné
-	if Library.SelectedTheme == "Christmas" then
-		-- Créer un conteneur pour les effets
-		local effectsContainer = Instance.new("Folder")
-		effectsContainer.Name = "ChristmasEffects"
-		effectsContainer.Parent = Container
-		
-		-- Ajouter les flocons de neige
-		CreateSnowflakes(effectsContainer)
-		
-		-- Ajouter des guirlandes lumineuses autour de la fenêtre
-		local mainWindow = Container:FindFirstChildOfClass("Frame")
-		if mainWindow then
-			-- Guirlande en haut
-			local topLights = CreateChristmasLights(mainWindow, UDim2.new(0, 0, 0, -15), mainWindow.AbsoluteSize.X, 0)
-			topLights.Parent = effectsContainer
-			table.insert(Library.ChristmasEffects, topLights)
-			
-			-- Guirlande à gauche
-			local leftLights = CreateChristmasLights(mainWindow, UDim2.new(0, -15, 0, 0), 0, mainWindow.AbsoluteSize.Y)
-			leftLights.Rotation = 90
-			leftLights.Parent = effectsContainer
-			table.insert(Library.ChristmasEffects, leftLights)
-			
-			-- Guirlande à droite
-			local rightLights = CreateChristmasLights(mainWindow, UDim2.new(1, 0, 0, 0), 0, mainWindow.AbsoluteSize.Y)
-			rightLights.Rotation = 90
-			rightLights.Parent = effectsContainer
-			table.insert(Library.ChristmasEffects, rightLights)
-		end
-		
-		table.insert(Library.ChristmasEffects, effectsContainer)
-	end
+	end    
 end
+
+local function PackColor(Color)
+	return {R = Color.R * 255, G = Color.G * 255, B = Color.B * 255}
+end    
 
 local function UnpackColor(Color)
 	return Color3.fromRGB(Color.R, Color.G, Color.B)
@@ -567,16 +487,6 @@ function Library:Init()
 		end)		
 	end	
 end	
-
--- Fonction pour activer le thème de Noël
-function Library:SetChristmasTheme(enable)
-    if enable then
-        self.SelectedTheme = "Christmas"
-    else
-        self.SelectedTheme = "Default"
-    end
-    SetTheme()
-end
 
 function Library:MakeWindow(WindowConfig)
 	local FirstTab = true
@@ -1871,17 +1781,11 @@ MakeResizable(ResizeBtn, MainWindow, Vector2.new(400, 250), Vector2.new(1200, 80
 				}), "Text")
 			})
 		end
-		print("[DEBUG] Application du thème dans MakeWindow (fin de fonction):", Library.SelectedTheme)
-		SetTheme()
 		return ElementFunction   
 	end  
 	
 	return TabFunction
-end
-
--- Appliquer le thème après la création de la fenêtre
-print("[DEBUG] Application du thème dans MakeWindow:", Library.SelectedTheme)
-SetTheme()
+end   
 
 local Configs_HUB = {
   Cor_Hub = Color3.fromRGB(15, 15, 15),
