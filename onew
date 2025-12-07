@@ -52,6 +52,8 @@ local Library = {
 print("[INFO] Thème de Noël activé manuellement")
 Library.SelectedTheme = "Christmas"
 print("[DEBUG] Thème appliqué:", Library.SelectedTheme)
+-- Forcer l'application du thème
+SetTheme()
 	Folder = nil,
 	SaveCfg = false,
 	Font = Enum.Font.Gotham
